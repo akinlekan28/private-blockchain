@@ -78,7 +78,7 @@ class Blockchain {
                 if (success) {
                     resolve(block);
                 } else {
-                    reject(Error("Error adding block"));
+                    reject({error: "Error adding block"});
                 }
             } catch (err) {
                 reject(err);
@@ -226,7 +226,9 @@ class Blockchain {
                     }
                 }
                 if (errorLog) {
-                    resolve({ error: errorLog });
+                    resolve(errorLog);
+                } else {
+                    resolve("Chain is valid.");
                 }
             } else {
                 reject({error: "Cannot validate chain."})
