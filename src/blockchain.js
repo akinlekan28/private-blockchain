@@ -209,29 +209,33 @@ class Blockchain {
         let self = this;
         let errorLog = [];
         return new Promise(async (resolve, reject) => {
-            if (self.height > 0) {
-                for (var i = 1; i <= self.height; i++) {
-                    let block = self.chain[i];
-                    let validation = await block.validate();
-                    if (!validation) {
-                        errorLog.push({
-                            message: "Cannot validate data",
-                            block
-                        })
-                    } else if (block.previousBlockHash != self.chain[i - 1].hash) {
-                        errorLog.push({
-                            message: "Cannot validate previous block hash",
-                            block
-                        })
+            try {
+                if (self.height > 0) {
+                    for (var i = 1; i <= self.height; i++) {
+                        let block = self.chain[i];
+                        let validation = await block.validate();
+                        if (!validation) {
+                            errorLog.push({
+                                message: "Cannot validate data",
+                                block
+                            })
+                        } else if (block.previousBlockHash != self.chain[i - 1].hash) {
+                            errorLog.push({
+                                message: "Cannot validate previous block hash",
+                                block
+                            })
+                        }
                     }
-                }
-                if (errorLog) {
-                    resolve(errorLog);
+                    if (errorLog) {
+                        resolve(errorLog);
+                    } else {
+                        resolve("Chain is valid.");
+                    }
                 } else {
-                    resolve("Chain is valid.");
+                    reject({ error: "Cannot validate chain." })
                 }
-            } else {
-                reject({error: "Cannot validate chain."})
+            } catch (error) {
+                reject(error)
             }
         })
     }
